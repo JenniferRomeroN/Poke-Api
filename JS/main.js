@@ -3,32 +3,20 @@ const pokemonData = [];
 const empezarDeNuevo = document.getElementById('nuevo');
 const historialKey = 'pokemonHistorial'; // Definir historialKey aquí
 
+async function validarNombrePokemon(nombre) {
+    try {
+        const respuesta = await fetch(`https://pokeapi.co/api/v2/pokemon/${nombre}`);
+        return respuesta.status === 200;
+    } catch (error) {
+        console.error('Error al validar el nombre del Pokémon:', error);
+        return false;
+    }
+}
 
 //Es para cuando buscamos 3 cosas se desabilite y no nos deje escribir, cuando ya tenga las 3 busquedas.
 let searchCount = 0;
 const boton = document.getElementById('agregar');
 const input = document.getElementById('nombre');
-
-// cards
-// const fetchButton = document.getElementById('obtener');
-// const nftName = document.querySelector('.nft h2');
-// const priceElement = document.querySelector('.nft .price p');
-
-// fetchButton.addEventListener('click', async () =>{
-//     try{
-//         const response = await fetch(` https://pokeapi.co/api/v2/pokemon`);
-//         const data = await response.json();
-
-//         if(data){
-//             nftName.textContent = data.name;
-//             priceElement.textContent = `${data.currency} ${data.price}}`;
-//         }else{
-//             console.log('Error fetching data')
-//         }
-//     } catch(error){
-//         console.error('Error fetching data')
-//     }
-// })
 
 //mostrar la info en las cartas
 const infoButton = document.getElementById('obtener');
@@ -43,18 +31,42 @@ boton.addEventListener('click', () =>{
     }
 });
 
+document.getElementById('agregar').addEventListener('click', async function () {
 
-// document.getElementById('agregar').addEventListener('click', async function () {
-//     const nombrePokemon = document.getElementById('nombre').value.toLowerCase();
-//     if(nombrePokemon ===''){
-//         alert('El campo no puede quedar vacio.')
-//         return;
-//     }
-//     // const nombrePokemon = document.getElementById('nombre').value;
-//     pokemones.push(nombrePokemon);
-//     document.getElementById('nombre').value = ''; 
-//     console.log('Pokémon agregado:', nombrePokemon);
-// });
+    const limite = 6; // Establecer el límite a 6 Pokémon
+
+    const nombrePokemon = document.getElementById('nombre').value.toLowerCase();
+    if (nombrePokemon === '') {
+        alert('El campo no puede quedar vacío.');
+        return;
+    }
+
+    if (navigator.onLine) {
+        try {
+            if (await validarNombrePokemon(nombrePokemon)) {
+                pokemones.push(nombrePokemon);
+                document.getElementById("nombre").value = ""; // Limpiar el campo de entrada
+                console.log("Pokémon agregado:", nombrePokemon);
+
+                if (pokemones.length > limite) {
+                    document.getElementById("agregar").disabled = true;
+                    document.getElementById("nombre").disabled = true;
+                }
+            } else {
+                alert("Error: El nombre del Pokémon no es válido");
+            }
+        } catch (error) {
+            console.error('Error al validar el nombre del Pokémon:', error);
+            alert('Ocurrió un error al validar el nombre del Pokémon.');
+        }
+    } else {
+        alert("Error: No cuentas con conexión a internet.");
+    }
+
+    localStorage.setItem(historialKey, JSON.stringify(pokemones));
+});
+
+
 
 // document.getElementById('obtener').addEventListener('click', async function () {
 //     if(pokemones.length === 0){
@@ -65,69 +77,12 @@ boton.addEventListener('click', () =>{
 //         await mostrarPokemon(nombrePokemon);
 //     }
 // });
-// async function obtenerPokemon(nombre) {
-//         const respuesta = await fetch(`https://pokeapi.co/api/v2/pokemon/${nombre}`); 
-//         return respuesta.json();
-//         }
-// main.js
-// ...
-
-document.getElementById('agregar').addEventListener('click', async function () {
-    const nombrePokemon = document.getElementById('nombre').value.toLowerCase();
-    if(nombrePokemon ===''){
-        alert('El campo no puede quedar vacio.')
-        return;
-    }
-    
-    // const nombrePokemon = document.getElementById('nombre').value;
-    pokemones.push(nombrePokemon);
-    document.getElementById('nombre').value = ''; 
-    console.log('Pokémon agregado:', nombrePokemon);
-
-    // Actualizar el historial en localStorage
-    localStorage.setItem(historialKey, JSON.stringify(pokemones));
-});
-
-
-
-document.getElementById('obtener').addEventListener('click', async function () {
-    if(pokemones.length === 0){
-        alert('No hay agregado para imprimir.')
-        return;
-    }
-    for (const nombrePokemon of pokemones) {
-        await mostrarPokemon(nombrePokemon);
-    }
-});
 
 async function obtenerPokemon(nombre) {
             const respuesta = await fetch(`https://pokeapi.co/api/v2/pokemon/${nombre}`); 
             return respuesta.json();
 }
 
-
-// ...
-
-
-// async function mostrarPokemon(nombre) {
-//         const pokemon = await obtenerPokemon(nombre);
-//         const pokemonDiv = document.createElement('pokemones');
-//         pokemonDiv.classList.add('pokemon');
-        
-//         const imagenUrl = pokemon.sprites.front_default;
-        
-//         const tipos = pokemon.types.map(type => type.type.name).join(', ');
-    
-//         const nombrePokemon = pokemon.name;
-//         const idPokemon = pokemon.id;
-    
-        
-//         // pokemonDiv.innerHTML = `
-//         //     <img src="${imagenUrl}" alt="${nombre}">
-//         //     <h2>Nombre: ${nombrePokemon}</h2>
-//         //     <p>ID: ${idPokemon}</p>
-//         //     <p>Tipo(s): ${tipos}</p>
-//         // `;
 async function mostrarPokemon(nombre) {
     const pokemon = await obtenerPokemon(nombre);
     const pokemonDiv = document.createElement('div'); // Cambiado de 'pokemones' a 'div'
@@ -181,43 +136,5 @@ pokemonData.forEach(pokemon => {
 });
 
 empezarDeNuevo.addEventListener('click', function() {
-    // Aquí puedes agregar una confirmación si deseas
-    // if (confirm("¿Estás seguro de que quieres actualizar la página?")) {
         location.reload();
-    // }
 });
-
-
-
-// Resto de tu código...
-
-// document.getElementById('historial').addEventListener('click', function() {
-//     mostrarHistorial();
-// });
-
-// Mueve la función fuera del evento clic del botón
-// function mostrarHistorial() {
-//     const historialDiv = document.getElementById('historial-container');
-//     historialDiv.innerHTML = ''; // Limpiamos el contenido anterior
-
-//     if (pokemones.length === 0) {
-//         historialDiv.textContent = 'No hay pokémon en el historial.';
-//         return;
-//     }
-
-//     const listaHistorial = document.createElement('ul');
-//     pokemones.forEach(pokemon => {
-//         const listItem = document.createElement('li');
-//         listItem.textContent = pokemon;
-//         listaHistorial.appendChild(listItem);
-//     });
-
-//     historialDiv.appendChild(listaHistorial);
-// }
-
-// document.getElementById('historial').addEventListener('click', function() {
-//     // Guardar el historial en localStorage
-//     localStorage.setItem(historialKey, JSON.stringify(pokemones));
-//     // Redirigir a la página de historial
-//     window.location.href = 'historial.html';
-// });
