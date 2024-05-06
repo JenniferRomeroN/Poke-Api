@@ -18,16 +18,15 @@ async function mostrarHistorialEnCartas(pokemones) {
         historialDiv.textContent = 'No hay pokémon en el historial.';
         return;
     }
-     // Obtener información de los Pokémon
+    
+    // Obtener información de los Pokémon
     const pokemonDatas = await Promise.all(pokemones.map(obtenerPokemon));
-     // Ordenar los Pokémon por experiencia de menor a mayor
+    
+    // Ordenar los Pokémon por experiencia de menor a mayor
     pokemonDatas.sort((pokemon1, pokemon2) => pokemon1.base_experience - pokemon2.base_experience);
+    
     // Iterar sobre cada nombre de Pokémon en el historial
     for (const pokemon of pokemonDatas) {
-        // Obtener la información del Pokémon desde la API
-        // const pokemon = await obtenerPokemon(nombrePokemon);
-
-        
         // Crear la carta del Pokémon
         const cartaHTML = generarCartaPokemon(
             pokemon.name,
@@ -36,10 +35,10 @@ async function mostrarHistorialEnCartas(pokemones) {
             pokemon.types.map(type => type.type.name),
             pokemon.abilities[0].ability.name,
             pokemon.base_experience
-    
         );
         // Agregar la carta al historial
         historialDiv.innerHTML += cartaHTML;
     }
 }
+
 
