@@ -21,6 +21,7 @@
 img {
     width: auto; /* ajusta el ancho según lo desees */
     height: auto; /* asegura que la altura se ajuste automáticamente para mantener la proporción */
+    cursor: pointer;
 }
 .container-objects {
     text-align: center; /* Alinea los elementos en el centro horizontalmente */
@@ -178,4 +179,16 @@ ins{
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+button{
+    background-color: #ffe582;
+    border: #ffe582;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+button:hover{
+    background-color:#3d7dca ;
+    cursor: pointer;
 }
