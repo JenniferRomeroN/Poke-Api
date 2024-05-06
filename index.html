@@ -5,8 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokémon</title>
     <link rel="icon" href="img/pokeball.png">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <header>
+        <div class="container">
+            <!-- <div class="container-pokemon">
+                <img src="img/pokemonTitle.png" alt="Pokémon">
+            </div> -->
+            <div class="logo">
+                <img alt="pokemon-logo" src="http://pngimg.com/uploads/pokemon_logo/pokemon_logo_PNG3.png">
+            </div>
+        </div>
+        
+    </header>
+
+    <div class="container-objects">
+        <div class="center-container">
+            <input type="text" id="nombre">
+        </div>
+        <div class="center-container">
+            <button id="agregar">Add Pokémon</button>
+            <!-- <button id="obtener">Print</button> -->
+            <button id="nuevo">Empezar de nuevo</button>
+        </div>
+        <div class="center-container">
+            <a href="historial.html"><button id="historial">Historial</button></a>
+        </div>
+        
     
+        <div class="pokemones" id="pokemones"></div> 
+        <div id="historial-container"></div>
+
+    </div>
+    
+<script src="JS/main.js"></script>
 </body>
 </html>
