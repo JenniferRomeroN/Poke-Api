@@ -3,6 +3,9 @@ const pokemonData = [];
 const empezarDeNuevo = document.getElementById('nuevo');
 const historialKey = 'pokemonHistorial'; // Definir historialKey aquí
 
+// Obtener el historial guardado en localStorage
+let pokemon = JSON.parse(localStorage.getItem(historialKey)) || [];
+
 async function validarNombrePokemon(nombre) {
     try {
         const respuesta = await fetch(`https://pokeapi.co/api/v2/pokemon/${nombre}`);
@@ -135,6 +138,60 @@ pokemonData.forEach(pokemon => {
     contenedorPokemon.innerHTML += cartaPokemonHTML;
 });
 
+
+// Función para agregar un Pokémon al historial
+async function agregarPokemonAlHistorial(nombrePokemon) {
+    try {
+        if (await validarNombrePokemon(nombrePokemon)) {
+            pokemon.push(nombrePokemon);
+            localStorage.setItem(historialKey, JSON.stringify(pokemon)); // Guardar el historial actualizado
+            console.log("Pokémon agregado:", nombrePokemon);
+            return true;
+        } else {
+            alert("Error: El nombre del Pokémon no es válido");
+            return false;
+        }
+    } catch (error) {
+        console.error('Error al validar el nombre del Pokémon:', error);
+        alert('Ocurrió un error al validar el nombre del Pokémon.');
+        return false;
+    }
+}
+
+// Event listener para el botón de agregar Pokémon
+document.getElementById('agregar').addEventListener('click', async function () {
+    const limite = 6; // Establecer el límite a 6 Pokémon
+
+    const nombrePokemon = document.getElementById('nombre').value.toLowerCase();
+    if (nombrePokemon === '') {
+        alert('El campo no puede quedar vacío.');
+        return;
+    }
+
+    if (navigator.onLine) {
+        if (await agregarPokemonAlHistorial(nombrePokemon)) {
+            document.getElementById("nombre").value = ""; // Limpiar el campo de entrada
+
+            if (pokemones.length >= limite) {
+                document.getElementById("agregar").disabled = true;
+                document.getElementById("nombre").disabled = true;
+            }
+        }
+    } else {
+        alert("Error: No cuentas con conexión a internet.");
+    }
+});
+
+// Mostrar el historial al cargar la página
+window.addEventListener('DOMContentLoaded', async () => {
+    await mostrarHistorialEnCartas(pokemon);
+});
+
 empezarDeNuevo.addEventListener('click', function() {
-        location.reload();
+    // Limpiar el historial del localStorage
+    localStorage.removeItem(historialKey);
+    // Reiniciar la variable pokemon a un array vacío
+    pokemon = [];
+    // Recargar la página
+    location.reload();
 });
